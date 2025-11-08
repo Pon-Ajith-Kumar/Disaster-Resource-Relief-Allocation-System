@@ -9,9 +9,8 @@
 
 </div>
 
-A focused and scalable **Spring Boot backend** built to simplify the distribution of essential relief products during emergencies.  
-The platform connects **Citizens**, **NGOs**, and **Administrators** in a streamlined workflow where:
-
+A focused and scalable **Spring Boot backend** built to simplify the distribution of essential relief products during emergencies.  <br /><br />
+The platform connects **Citizens**, **NGOs**, and **Administrators** in a streamlined workflow where: <br />
 ✅ Citizens can request **basic essential products** they need  
 ✅ NGOs can **create, update, and manage** these products on the platform  
 ✅ Admin monitors **all operations**, manages the **database**, and ensures smooth coordination
