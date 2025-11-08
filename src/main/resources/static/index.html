@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Relief System</title>
+    <style>
+        /* Base reset */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* Page background */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(180deg, #0f3f3a 0%, #074f44 60%);
+            min-height: 100vh;
+            padding: 30px;
+            color: #072d27;
+        }
+
+        /* Page container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Users Tab Styles */
+        .users-container {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .user-section {
+            background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+            border: 1px solid rgba(4,120,87,0.08);
+        }
+
+        .user-section h2 {
+            color: #064e3b;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(252,211,77,0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-section h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0b7a5f;
+        }
+
+        /* Header with gold accent */
+        .header {
+            background: linear-gradient(135deg, rgba(4, 120, 87, 0.95), rgba(6, 95, 70, 0.95));
+            padding: 36px 40px;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(2, 62, 52, 0.45);
+            margin-bottom: 28px;
+            text-align: center;
+            border-left: 6px solid rgba(252, 211, 77, 0.95);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 { color: #fff; font-size: 28px; letter-spacing: 0.2px; margin-bottom: 6px; }
+        .header p { color: #d1fae5; opacity: 0.95; }
+
+        /* Tabs container (pill-style tabs) */
+        .tabs { display:flex; gap: 12px; margin-bottom: 22px; flex-wrap:wrap; align-items:center; }
+
+        .nav-tabs { display:flex; gap:12px; flex-wrap:wrap; }
+
+        .tab {
+            display:inline-flex; align-items:center; gap:10px;
+            padding: 12px 20px;
+            background: linear-gradient(180deg,#ffffff 0%, #f7fff9 100%);
+            border: 1px solid rgba(16,185,129,0.15);
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 700;
+            color: #025c4f;
+            box-shadow: 0 6px 18px rgba(4,120,87,0.08);
+            transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+            user-select: none;
+        }
+
+        .tab:hover { transform: translateY(-4px); box-shadow: 0 12px 26px rgba(4,120,87,0.12); }
+
+        .tab.active {
+            background: linear-gradient(90deg, #0b6b56 0%, #0f8f6d 100%);
+            color: #fff; border: 1px solid rgba(252,211,77,0.9);
+            box-shadow: 0 14px 40px rgba(4,120,87,0.22);
+            transform: translateY(-6px) scale(1.02);
+        }
+
+        /* little gold dot indicator on active tab */
+        .tab.active::after {
+            content: '';
+            display:inline-block; width:10px; height:10px; border-radius:50%;
+            background: linear-gradient(180deg,#f6d365,#fcd34d);
+            margin-left:6px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        /* Content card */
+        .content {
+            background: linear-gradient(180deg,#ffffff,#fbfffd);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(3,39,34,0.1);
+            border: 1px solid rgba(4,120,87,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, rgba(252,211,77,0.8), rgba(252,211,77,0.2));
+        }
+        
+        .content h2 {
+            color: #064e3b;
+            font-size: 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .content h2::after {
+            content: '';
+            display: block;
+            height: 2px;
+            flex: 1;
+            background: linear-gradient(90deg, rgba(4,120,87,0.1), transparent);
+            margin-left: 12px;
+        }
+
+        .tab-content { display:none; opacity:0; transition:opacity .2s ease; }
+        .tab-content.active { display:block; opacity:1; }
+
+        /* Dashboard Stats Layout */
+        .stats-grid { 
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            margin-bottom: 30px;
+        }
+
+        .stats-section {
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.98));
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.1);
+        }
+
+        .stats-section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #064e3b;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(252,211,77,0.3);
+        }
+
+        .stats-icon {
+            font-size: 24px;
+            background: linear-gradient(135deg, #0f7a61, #0a5c48);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            padding: 24px;
+            border-radius: 16px;
+            color: #fff;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card h3 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-card p {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        /* Card Variants */
+        .stat-card.primary {
+            background: linear-gradient(135deg, #0f7a61, #0a5c48);
+        }
+
+        .stat-card.warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .stat-card.success {
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+
+        .stat-card.danger {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+
+        .stat-card.resource {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+        }
+
+        .stat-card.highlight {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+        }
+
+        .stat-card.user {
+            background: linear-gradient(135deg, #0f766e, #0d9488);
+        }
+
+        .stat-card.ngo {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+        }
+
+        .stat-card.citizen {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .stats-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-card h3 {
+                font-size: 28px;
+            }
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #064e3b;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+            transition: color 0.2s ease;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 2px solid #e6f3ee;
+            background: #fcfffd;
+            font-size: 15px;
+            color: #1a4a42;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(11,122,95,0.04);
+        }
+        
+        .form-group input::placeholder, .form-group textarea::placeholder {
+            color: #94a3b8;
+        }
+        
+        .form-group input:hover, .form-group select:hover, .form-group textarea:hover {
+            border-color: #10b981;
+            background: #f8fffc;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #0b7a5f;
+            box-shadow: 0 8px 20px rgba(11,122,95,0.12);
+            background: #ffffff;
+            transform: translateY(-1px);
+        }
+        
+        /* Style for disabled fields after successful submission */
+        .form-group input:disabled, .form-group select:disabled {
+            opacity: 0.8;
+            background: #f0fff9;
+            border-color: #0b7a5f;
+            color: #065f46;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230b7a5f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 48px;
+        }
+
+        /* Buttons */
+        .btn { padding:10px 18px; border-radius:10px; font-weight:700; border:none; cursor:pointer; }
+        .btn.primary { background: linear-gradient(90deg,#0b7a5f,#0f8f6d); color:#fff; box-shadow: 0 10px 30px rgba(5,120,87,0.14); }
+        .btn.ghost { background: transparent; border:1px solid rgba(11,122,95,0.12); color:#0b7a5f; }
+        .btn.warn { background: linear-gradient(90deg,#f6d365,#fcd34d); color:#08321a; }
+        .btn:active { transform: translateY(1px); }
+
+        /* Tables */
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        
+        .table th {
+            background: linear-gradient(135deg, #0f7a61 0%, #0a5c48 100%);
+            color: #fff;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            padding: 16px 20px;
+            border-bottom: 3px solid rgba(252,211,77,0.3);
+        }
+        
+        .table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(6,95,70,0.08);
+            color: #2d3748;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .table tbody tr {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .table tbody tr:hover {
+            background: linear-gradient(90deg, rgba(11,122,95,0.04), rgba(11,122,95,0.01));
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .table tbody tr:nth-child(odd) {
+            background: rgba(11,122,95,0.02);
+        }
+
+        /* Add subtle animation for data loading */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .table tbody tr {
+            animation: fadeIn 0.3s ease forwards;
+            opacity: 0;
+            animation-delay: calc(0.1s * var(--row-index, 0));
+        }
+
+        /* Badges */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            transition: all 0.2s ease;
+        }
+        
+        .badge::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .badge.pending {
+            background: linear-gradient(135deg, #fff7d6, #fff3c4);
+            color: #854d0e;
+            border: 1px solid rgba(243,210,122,0.5);
+        }
+        .badge.pending::before { background: #f59e0b; }
+        
+        .badge.allocated {
+            background: linear-gradient(135deg, #dff7ec, #d0f5e6);
+            color: #065f46;
+            border: 1px solid rgba(143,224,176,0.5);
+        }
+        .badge.allocated::before { background: #10b981; }
+        
+        .badge.rejected {
+            background: linear-gradient(135deg, #ffe7e7, #ffd5d5);
+            color: #991b1b;
+            border: 1px solid rgba(244,163,163,0.5);
+        }
+        .badge.rejected::before { background: #ef4444; }
+        
+        .badge.high {
+            background: linear-gradient(135deg, #ffd0c0, #ffc1aa);
+            color: #7c2d12;
+        }
+        .badge.high::before { background: #ea580c; }
+        
+        .badge.medium {
+            background: linear-gradient(135deg, #fff2cc, #ffe7b3);
+            color: #854d0e;
+        }
+        .badge.medium::before { background: #eab308; }
+        
+        .badge.low {
+            background: linear-gradient(135deg, #e6eef0, #d8e5e9);
+            color: #1e3a5c;
+        }
+        .badge.low::before { background: #475569; }
+        
+        .badge:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Alerts & loading */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .alert::before {
+            content: '';
+            width: 24px;
+            height: 24px;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .alert.success {
+            background: linear-gradient(135deg, #e6fcf0, #d0f5e6);
+            color: #065f46;
+            border: 1px solid rgba(16,185,129,0.2);
+            box-shadow: 0 4px 12px rgba(16,185,129,0.1);
+        }
+        
+        .alert.success::before {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23047857' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 11.08V12a10 10 0 1 1-5.93-9.14'%3E%3C/path%3E%3Cpolyline points='22 4 12 14.01 9 11.01'%3E%3C/polyline%3E%3C/svg%3E");
+        }
+        
+        .alert.error {
+            background: linear-gradient(135deg, #fff1f0, #ffe4e2);
+            color: #991b1b;
+            border: 1px solid rgba(239,68,68,0.2);
+            box-shadow: 0 4px 12px rgba(239,68,68,0.1);
+        }
+        
+        .alert.error::before {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23dc2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='15' y1='9' x2='9' y2='15'%3E%3C/line%3E%3Cline x1='9' y1='9' x2='15' y2='15'%3E%3C/line%3E%3C/svg%3E");
+        }
+
+        .loading {
+            text-align: center;
+            padding: 32px;
+            color: #0b6b56;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .loading::before {
+            content: '';
+            width: 24px;
+            height: 24px;
+            border: 3px solid #e6f3ee;
+            border-top-color: #0b6b56;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Modal */
+        #requestModal { display:none; }
+        #requestModal > div { max-width:600px; }
+
+        /* Responsive tweaks */
+        @media (max-width: 768px) {
+            .tab { padding:10px 14px; font-size:14px; }
+            .header { padding:22px; }
+            .stat-card h3 { font-size:22px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Disaster Relief Resource Allocation System</h1>
+        <p>Connecting Citizens, NGOs, and Volunteers for Disaster Management</p>
+    </div>
+
+    <div class="tabs">
+        <div class="nav-tabs" style="display: flex; flex: 1; gap: 10px; flex-wrap: wrap;">
+            <button class="tab active" data-protected="true" onclick="showTab('dashboard', event)">Dashboard</button>
+            <button class="tab" data-protected="true" onclick="showTab('users', event)">Users</button>
+            <button class="tab" data-protected="true" onclick="showTab('resources', event)">Resources</button>
+            <button class="tab" data-protected="true" onclick="showTab('requests', event)">Requests</button>
+            <button class="tab" data-protected="true" data-admin="true" onclick="showTab('allocations', event)">Allocations</button>
+            <button class="tab" data-protected="true" onclick="showTab('add-resource', event)">Add Resource</button>
+            <button class="tab" data-protected="true" onclick="showTab('create-request', event)">Create Request</button>
+            <button class="tab" data-auth="true" onclick="showTab('login', event)">Login</button>
+            <button class="tab" data-auth="true" onclick="showTab('register', event)">Register</button>
+        </div>
+        <div id="authArea" style="margin-left: auto; display:flex; gap:10px; align-items:center;">
+            <span id="currentUser" style="color:white; font-weight:bold;"></span>
+            <button id="logoutBtn" class="tab" style="display:none; background:#e74c3c; color:white;" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid" id="statsGrid">
+                <div class="loading">Loading statistics...</div>
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="users" class="tab-content">
+            <div class="users-container">
+                <div class="user-section">
+                    <h2>Administrators</h2>
+                    <table class="table" id="adminUsersTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Location</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="5" class="loading">Loading administrators...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="user-section">
+                    <h2>NGO Representatives</h2>
+                    <table class="table" id="ngoUsersTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Organization</th>
+                                <th>Location</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="6" class="loading">Loading NGO users...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="user-section">
+                    <h2>Citizens</h2>
+                    <table class="table" id="citizenUsersTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Location</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="5" class="loading">Loading citizens...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resources Tab -->
+        <div id="resources" class="tab-content">
+            <h2>Available Resources</h2>
+            <table class="table" id="resourcesTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Location</th>
+                    <th>Source</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr><td colspan="6" class="loading">Loading resources...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Requests Tab -->
+        <div id="requests" class="tab-content">
+            <h2>All Requests</h2>
+            <table class="table" id="requestsTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Resource</th>
+                    <th>Quantity</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr><td colspan="7" class="loading">Loading requests...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Allocations Tab -->
+        <div id="allocations" class="tab-content">
+            <h2>Allocation History</h2>
+            <table class="table" id="allocationsTable">
+                <thead>
+                <tr>
+                    <th>Allocation ID</th>
+                    <th>Resource</th>
+                    <th>Request ID</th>
+                    <th>Location</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Allocation Time</th>
+                    <th>Notes</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr><td colspan="8" class="loading">Loading allocations...</td></tr>
+                </tbody>
+            </table>
+            <div style="text-align: right; margin-top: 10px;">
+                <button class="btn" onclick="refreshAllocations()">Refresh</button>
+            </div>
+        </div>
+
+        <!-- Add Resource Tab -->
+        <div id="add-resource" class="tab-content">
+            <h2>Add New Resource</h2>
+            <div id="resourceAlert"></div>
+            <form id="resourceForm">
+                <div class="form-group">
+                    <label>Resource Name *</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Quantity *</label>
+                    <input type="number" name="quantity" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select name="category" required>
+                        <option value="FOOD">Food</option>
+                        <option value="WATER">Water</option>
+                        <option value="MEDICAL">Medical</option>
+                        <option value="CLOTHING">Clothing</option>
+                        <option value="SHELTER">Shelter</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Location *</label>
+                    <input type="text" name="location" required>
+                </div>
+                <div class="form-group">
+                    <label>Source</label>
+                    <input type="text" name="source" placeholder="e.g., Red Cross, Government">
+                </div>
+                <button type="submit" class="btn">Add Resource</button>
+            </form>
+        </div>
+
+        <!-- Create Request Tab -->
+        <div id="create-request" class="tab-content">
+            <h2>Available Resources</h2>
+            <p>Click "Request" on any resource you need to create a new request.</p>
+            <div id="requestAlert"></div>
+            <table class="table" id="availableResourcesTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Available Quantity</th>
+                        <th>Location</th>
+                        <th>Source</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="6" class="loading">Loading available resources...</td></tr>
+                </tbody>
+            </table>
+
+            <!-- Request Modal -->
+            <div id="requestModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+                <div style="position: relative; background: white; max-width: 500px; margin: 50px auto; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <h3 style="margin-bottom: 20px;">Request Resource</h3>
+                    <form id="requestForm">
+                        <input type="hidden" name="userId">
+                        <input type="hidden" name="resourceId">
+                        <input type="hidden" name="resourceName">
+                        
+                        <div class="form-group">
+                            <label>Resource: </label>
+                            <span id="modalResourceName" style="font-weight: bold;"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Available: </label>
+                            <span id="modalResourceQuantity" style="font-weight: bold;"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Request Quantity *</label>
+                            <input type="number" name="quantity" min="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <select name="priority">
+                                <option value="MEDIUM">Medium</option>
+                                <option value="HIGH">High</option>
+                                <option value="LOW">Low</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Reason *</label>
+                            <textarea name="reason" rows="3" required placeholder="Explain why you need this resource"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Location *</label>
+                            <input type="text" name="location" required>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                            <button type="button" class="btn" style="background: #6b7280;" onclick="closeRequestModal()">Cancel</button>
+                            <button type="submit" class="btn">Submit Request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Tab -->
+        <div id="login" class="tab-content">
+            <h2>Login</h2>
+            <div id="loginAlert"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password *</label>
+                    <input type="password" name="password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+        </div>
+
+        <!-- Register Tab -->
+        <div id="register" class="tab-content">
+            <h2>Register</h2>
+            <div id="registerAlert"></div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password *</label>
+                    <input type="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label>Role *</label>
+                    <select name="role" required>
+                        <option value="CITIZEN">Citizen</option>
+                        <option value="NGO">NGO</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="location">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" name="phone">
+                </div>
+                <button type="submit" class="btn">Register</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = 'http://localhost:8080/api';
+
+    function showTab(tabName, evt) {
+        const currentUser = getUser();
+        
+        // Clear only error alerts, keep success messages
+        document.querySelectorAll('.alert.error').forEach(alert => {
+            alert.remove();
+        });
+        
+        // Reset all forms when switching tabs
+        document.querySelectorAll('form').forEach(form => {
+            form.reset();
+        });
+        
+        // Store any success messages
+        const successMessages = {};
+        ['loginAlert', 'registerAlert', 'resourceAlert', 'requestAlert'].forEach(id => {
+            const container = document.getElementById(id);
+            const successAlert = container.querySelector('.alert.success');
+            if (successAlert) {
+                successMessages[id] = successAlert.innerHTML;
+            }
+            container.innerHTML = '';
+        });
+        
+        // Restore success messages if they exist
+        Object.entries(successMessages).forEach(([id, message]) => {
+            document.getElementById(id).innerHTML = `<div class="alert success">${message}</div>`;
+        });
+        
+        // First check if we're trying to access a protected tab while logged out
+        const isProtected = document.querySelector(`button[data-protected="true"][onclick*="${tabName}"]`);
+        if (isProtected && !getToken()) {
+            alert('Please login to access this feature');
+            showTab('login', null);
+            return;
+        }
+
+        // Check admin-only tabs
+        const adminOnly = document.querySelector(`button[data-admin="true"][onclick*="${tabName}"]`);
+        if (adminOnly) {
+            if (!currentUser) {
+                alert('Please login to access this feature');
+                showTab('login', null);
+                return;
+            }
+            if (currentUser.role !== 'ADMIN') {
+                alert('This section is only accessible to administrators');
+                showTab('dashboard', null);
+                return;
+            }
+        }
+
+        // Update tab buttons
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+        // Find and activate the clicked tab button
+        if (evt && evt.target) {
+            evt.target.classList.add('active');
+        } else {
+            // If no event (direct call), find and activate the corresponding tab button
+            const tabButton = document.querySelector(`.tab[onclick*="${tabName}"]`);
+            if (tabButton) tabButton.classList.add('active');
+        }
+
+        // Show the selected content
+        const contentElement = document.getElementById(tabName);
+        if (contentElement) {
+            contentElement.classList.add('active');
+            
+            // Load data based on tab
+            switch(tabName) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'resources':
+                    loadResources();
+                    break;
+                case 'requests':
+                    loadRequests();
+                    break;
+                case 'allocations':
+                    loadAllocations();
+                    break;
+                case 'create-request':
+                    loadAvailableResources();
+                    break;
+            }
+        } else {
+            console.error(`Tab content not found: ${tabName}`);
+        }
+    }
+
+    // Authentication helpers
+    function getToken() {
+        return localStorage.getItem('token');
+    }
+
+    function getUser() {
+        const s = localStorage.getItem('user');
+        return s ? JSON.parse(s) : null;
+    }
+
+    function authHeaders() {
+        const headers = {'Content-Type': 'application/json'};
+        const token = getToken();
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        return headers;
+    }
+
+    async function authFetch(url, options = {}) {
+        options.headers = Object.assign({}, options.headers || {}, authHeaders());
+        const response = await fetch(url, options);
+        // Handle common auth / permission responses centrally
+        if (response.status === 401) {
+            // Clear auth state and redirect to login
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            updateAuthUI();
+            showTab('login', null);
+            throw new Error('Session expired. Please login again.');
+        }
+
+        if (response.status === 403) {
+            // Forbidden - user lacks permission
+            // Try to parse a friendly message, otherwise throw generic
+            const body = await response.text();
+            const msg = body ? body : 'You do not have permission to perform this action.';
+            throw new Error(msg);
+        }
+
+        if (response.status >= 500) {
+            throw new Error('Server error. Please try again later.');
+        }
+
+        return response;
+    }
+    // Safely parse JSON responses (handles empty/non-JSON bodies)
+    async function parseJsonResponse(response) {
+        const ct = response.headers.get('content-type') || '';
+        if (ct.includes('application/json')) {
+            try {
+                return await response.json();
+            } catch (e) {
+                return { success: response.ok, message: 'Invalid JSON response' };
+            }
+        }
+        const text = await response.text();
+        return { success: response.ok, message: text || response.statusText };
+    }
+
+    function updateAuthUI() {
+        const user = getUser();
+        const currentUser = document.getElementById('currentUser');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const protectedTabs = document.querySelectorAll('[data-protected="true"]');
+        const authTabs = document.querySelectorAll('[data-auth="true"]');
+
+        // helper to show/hide specific tab by its tabName used in showTab
+        function setTabDisplay(tabName, visible) {
+            const tabButton = document.querySelector(`.tab[onclick*="${tabName}"]`);
+            if (tabButton) tabButton.style.display = visible ? 'block' : 'none';
+        }
+
+        if (user) {
+            currentUser.textContent = `Welcome, ${user.name}!`;
+            logoutBtn.style.display = 'block';
+            authTabs.forEach(tab => tab.style.display = 'none');
+
+            // Default visible for any logged-in user
+            setTabDisplay('resources', true);
+            setTabDisplay('requests', true);
+
+            // Role-based visibility
+            const role = (user.role || '').toString();
+            // Dashboard visible to any authenticated user (Admin, NGO, Citizen)
+            setTabDisplay('dashboard', true);
+            // Create request available to all logged-in users
+            setTabDisplay('create-request', true);
+            // Add resource available to all logged-in users 
+            setTabDisplay('add-resource', true);
+            // Admin-only tabs
+            setTabDisplay('allocations', (role === 'ADMIN'));
+            setTabDisplay('users', (role === 'ADMIN'));
+            
+            // If on admin-only tab and not admin, redirect to dashboard
+            const currentTab = document.querySelector('.tab-content.active');
+            if (currentTab && ['users', 'allocations'].includes(currentTab.id) && role !== 'ADMIN') {
+                showTab('dashboard', null);
+            }
+
+        } else {
+            currentUser.textContent = '';
+            logoutBtn.style.display = 'none';
+            protectedTabs.forEach(tab => tab.style.display = 'none');
+            authTabs.forEach(tab => tab.style.display = 'block');
+            showTab('login', null);
+        }
+    }
+
+    async function loadDashboard() {
+        const statsGrid = document.getElementById('statsGrid');
+        try {
+            statsGrid.innerHTML = '<div class="loading">Loading statistics...</div>';
+            
+            const response = await authFetch(`${API_BASE}/admin/dashboard`);
+            const data = await parseJsonResponse(response);
+
+            if (data.success) {
+                const stats = data.data;
+                statsGrid.innerHTML = `
+                    <div class="stats-section">
+                        <h2 class="stats-section-title">
+                            <i class="stats-icon">📋</i>
+                            Request Statistics
+                        </h2>
+                        <div class="stats-group">
+                            <div class="stat-card primary">
+                                <h3>${stats.totalRequests}</h3>
+                                <p>Total Requests</p>
+                            </div>
+                            <div class="stat-card warning">
+                                <h3>${stats.pendingRequests}</h3>
+                                <p>Pending Requests</p>
+                            </div>
+                            <div class="stat-card success">
+                                <h3>${stats.allocatedRequests}</h3>
+                                <p>Allocated Requests</p>
+                            </div>
+                            <div class="stat-card danger">
+                                <h3>${stats.rejectedRequests}</h3>
+                                <p>Rejected Requests</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-section">
+                        <h2 class="stats-section-title">
+                            <i class="stats-icon">📦</i>
+                            Resource Management
+                        </h2>
+                        <div class="stats-group">
+                            <div class="stat-card resource">
+                                <h3>${stats.totalResources}</h3>
+                                <p>Total Resources</p>
+                            </div>
+                            <div class="stat-card resource">
+                                <h3>${stats.availableResources}</h3>
+                                <p>Available Resources</p>
+                            </div>
+                            <div class="stat-card highlight">
+                                <h3>${stats.todayAllocations}</h3>
+                                <p>Today's Allocations</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-section">
+                        <h2 class="stats-section-title">
+                            <i class="stats-icon">👥</i>
+                            User Overview
+                        </h2>
+                        <div class="stats-group">
+                            <div class="stat-card user">
+                                <h3>${stats.totalUsers}</h3>
+                                <p>Total Users</p>
+                            </div>
+                            <div class="stat-card ngo">
+                                <h3>${stats.ngoCount}</h3>
+                                <p>NGOs</p>
+                            </div>
+                            <div class="stat-card citizen">
+                                <h3>${stats.citizenCount}</h3>
+                                <p>Citizens</p>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+            }
+        } catch (error) {
+            console.error('Error loading dashboard:', error);
+            statsGrid.innerHTML = `<div class="alert error">Error loading dashboard: ${error.message}</div>`;
+        }
+    }
+
+    async function loadResources() {
+        try {
+            const response = await authFetch(`${API_BASE}/resources`);
+            const data = await parseJsonResponse(response);
+
+            const tbody = document.querySelector('#resourcesTable tbody');
+            if (data.success) {
+                tbody.innerHTML = data.data.map(r => `
+                        <tr>
+                            <td>${r.id}</td>
+                            <td>${r.name}</td>
+                            <td>${r.category}</td>
+                            <td>${r.quantity}</td>
+                            <td>${r.location || 'N/A'}</td>
+                            <td>${r.source || 'N/A'}</td>
+                        </tr>
+                    `).join('');
+            } else {
+                tbody.innerHTML = `<tr><td colspan="6" class="error">Error: ${data.message}</td></tr>`;
+            }
+        } catch (error) {
+            const tbody = document.querySelector('#resourcesTable tbody');
+            tbody.innerHTML = `<tr><td colspan="6" class="error">Error: ${error.message}</td></tr>`;
+            console.error('Error loading resources:', error);
+        }
+    }
+
+    async function loadRequests() {
+        try {
+            const response = await authFetch(`${API_BASE}/requests`);
+            const data = await parseJsonResponse(response);
+
+            const tbody = document.querySelector('#requestsTable tbody');
+            if (data.success) {
+                tbody.innerHTML = data.data.map(r => `
+                        <tr>
+                            <td>${r.id}</td>
+                            <td>${r.resourceName}</td>
+                            <td>${r.quantity}</td>
+                            <td><span class="badge ${(r.priority || '').toLowerCase()}">${r.priority || 'N/A'}</span></td>
+                            <td><span class="badge ${(r.status || '').toLowerCase()}">${r.status || 'PENDING'}</span></td>
+                            <td>${r.location || 'N/A'}</td>
+                            <td>${r.createdAt ? new Date(r.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        </tr>
+                    `).join('');
+            } else {
+                tbody.innerHTML = `<tr><td colspan="7" class="error">Error: ${data.message}</td></tr>`;
+            }
+        } catch (error) {
+            const tbody = document.querySelector('#requestsTable tbody');
+            tbody.innerHTML = `<tr><td colspan="7" class="error">Error: ${error.message}</td></tr>`;
+            console.error('Error loading requests:', error);
+        }
+    }
+
+    async function loadAllocations() {
+        const tbody = document.querySelector('#allocationsTable tbody');
+        try {
+            tbody.innerHTML = '<tr><td colspan="8" class="loading">Loading allocations...</td></tr>';
+            
+            const response = await authFetch(`${API_BASE}/admin/allocations`);
+            const data = await parseJsonResponse(response);
+
+            if (data.success) {
+                if (data.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No allocations found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = data.data.map(a => `
+                    <tr>
+                        <td>${a.id}</td>
+                        <td>${a.resourceName || 'Unknown'}</td>
+                        <td>${a.requestId}</td>
+                        <td>${a.location || 'N/A'}</td>
+                        <td>${a.quantity}</td>
+                        <td><span class="badge ${(a.status || '').toLowerCase()}">${a.status || 'N/A'}</span></td>
+                        <td>${new Date(a.allocatedTime).toLocaleString()}</td>
+                        <td>${a.notes || 'N/A'}</td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = `<tr><td colspan="8" class="error">Error: ${data.message}</td></tr>`;
+            }
+        } catch (error) {
+            tbody.innerHTML = `<tr><td colspan="8" class="error">Error loading allocations: ${error.message}</td></tr>`;
+            console.error('Error loading allocations:', error);
+        }
+    }
+
+    function refreshAllocations() {
+        loadAllocations();
+    }
+
+    document.getElementById('resourceForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        data.quantity = parseInt(data.quantity);
+
+        const alertDiv = document.getElementById('resourceAlert');
+        try {
+            alertDiv.innerHTML = '<div class="alert">Submitting resource...</div>';
+            
+            const response = await authFetch(`${API_BASE}/resources/add`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            const result = await parseJsonResponse(response);
+
+            alertDiv.innerHTML = `
+                    <div class="alert ${result.success ? 'success' : 'error'}">
+                        ${result.message}
+                    </div>
+                `;
+
+            if (result.success) {
+                e.target.reset();
+                // Show success message
+                document.getElementById('resourceAlert').innerHTML = `
+                    <div class="alert success">
+                        ${result.message}
+                    </div>
+                `;
+                // Reload resources table
+                loadResources();
+                // Show the resources tab after showing message
+                setTimeout(() => showTab('resources', null), 2000);
+            }
+        } catch (error) {
+            alertDiv.innerHTML = `
+                    <div class="alert error">
+                        Error: ${error.message}
+                        ${!getToken() ? '<br>Please ensure you are logged in.' : ''}
+                    </div>
+                `;
+            
+            if (!getToken()) {
+                showTab('login', null);
+            }
+        }
+    });
+
+    async function loadAvailableResources() {
+        try {
+            const response = await authFetch(`${API_BASE}/resources/available`);
+            const data = await parseJsonResponse(response);
+
+            const tbody = document.querySelector('#availableResourcesTable tbody');
+            if (data.success) {
+                tbody.innerHTML = data.data
+                    .filter(r => r.quantity > 0)  // Only show resources with available quantity
+                    .map(r => `
+                        <tr>
+                            <td>${r.name}</td>
+                            <td>${r.category}</td>
+                            <td>${r.quantity}</td>
+                            <td>${r.location || 'N/A'}</td>
+                            <td>${r.source || 'N/A'}</td>
+                            <td>
+                                <button class="btn" onclick="openRequestModal(${JSON.stringify(r).replace(/"/g, '&quot;')})">
+                                    Request
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('') || '<tr><td colspan="6">No resources currently available</td></tr>';
+            } else {
+                tbody.innerHTML = `<tr><td colspan="6" class="error">Error: ${data.message}</td></tr>`;
+            }
+        } catch (error) {
+            const tbody = document.querySelector('#availableResourcesTable tbody');
+            tbody.innerHTML = `<tr><td colspan="6" class="error">Error: ${error.message}</td></tr>`;
+        }
+    }
+
+    function openRequestModal(resource) {
+        const user = getUser();
+        if (!user) {
+            document.getElementById('requestAlert').innerHTML = `
+                <div class="alert error">Please login first</div>
+            `;
+            showTab('login', null);
+            return;
+        }
+
+        // Set modal content
+        document.getElementById('modalResourceName').textContent = resource.name;
+        document.getElementById('modalResourceQuantity').textContent = resource.quantity;
+        
+        // Set form hidden fields
+        const form = document.getElementById('requestForm');
+        form.querySelector('[name="userId"]').value = user.id;
+        form.querySelector('[name="resourceId"]').value = resource.id;
+        form.querySelector('[name="resourceName"]').value = resource.name;
+        
+        // Set max quantity
+        form.querySelector('[name="quantity"]').max = resource.quantity;
+        
+        // Show modal
+        document.getElementById('requestModal').style.display = 'block';
+    }
+
+    function closeRequestModal() {
+        document.getElementById('requestModal').style.display = 'none';
+        document.getElementById('requestForm').reset();
+    }
+
+    document.getElementById('requestForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        
+        // Validate quantity
+        const quantity = parseInt(data.quantity);
+        const maxQuantity = parseInt(e.target.querySelector('[name="quantity"]').max);
+        if (quantity > maxQuantity) {
+            document.getElementById('requestAlert').innerHTML = `
+                <div class="alert error">Requested quantity exceeds available amount</div>
+            `;
+            return;
+        }
+
+        const alertDiv = document.getElementById('requestAlert');
+        try {
+            alertDiv.innerHTML = '<div class="alert">Submitting request...</div>';
+            
+            const response = await authFetch(`${API_BASE}/requests/add`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    ...data,
+                    quantity: quantity,
+                })
+            });
+            const result = await parseJsonResponse(response);
+
+            alertDiv.innerHTML = `
+                <div class="alert ${result.success ? 'success' : 'error'}">
+                    ${result.message}
+                </div>
+            `;
+
+            if (result.success) {
+                e.target.reset();
+                closeRequestModal();
+                // Show success message
+                document.getElementById('requestAlert').innerHTML = `
+                    <div class="alert success">
+                        ${result.message}
+                    </div>
+                `;
+                // Reload requests table and available resources
+                loadRequests();
+                loadAvailableResources();
+                // Show the requests tab after showing message
+                setTimeout(() => showTab('requests', null), 2000);
+            }
+        } catch (error) {
+            alertDiv.innerHTML = `
+                <div class="alert error">
+                    Error: ${error.message}
+                    ${!getToken() ? '<br>Please ensure you are logged in.' : ''}
+                </div>
+            `;
+        }
+    });
+
+    // Login form
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+
+        try {
+            const response = await fetch(`${API_BASE}/auth/login`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            const result = await parseJsonResponse(response);
+            document.getElementById('loginAlert').innerHTML = `\n                    <div class="alert ${result.success ? 'success' : 'error'}">\n                        ${result.message}\n                    </div>\n                `;
+
+            if (result.success) {
+                // Store form values
+                const formData = new FormData(e.target);
+                const formValues = Object.fromEntries(formData);
+                
+                // store token and user info from the data object
+                localStorage.setItem('token', result.data.token);
+                localStorage.setItem('user', JSON.stringify({
+                    name: result.data.name,
+                    email: result.data.email,
+                    role: result.data.role,
+                    id: result.data.id
+                }));
+                
+                // Force reload authFetch headers
+                updateAuthUI();
+                
+                // Show success message
+                document.getElementById('loginAlert').innerHTML = `
+                    <div class="alert success">
+                        ${result.message}
+                    </div>
+                `;
+                
+                // Keep form fields disabled but visible
+                Array.from(e.target.elements).forEach(element => {
+                    if (element.type !== 'submit') {
+                        element.disabled = true;
+                    }
+                });
+                
+                // Redirect to dashboard after showing message
+                setTimeout(() => {
+                    e.target.reset();
+                    showTab('dashboard', null);
+                }, 2000);
+            }
+        } catch (error) {
+            document.getElementById('loginAlert').innerHTML = `\n                    <div class="alert error">Error: ${error.message}</div>\n                `;
+        }
+    });
+
+    // Register form
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+
+        // convert role string to the server-expected enum name (already same)
+
+        try {
+            const response = await fetch(`${API_BASE}/auth/register`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            const result = await parseJsonResponse(response);
+            document.getElementById('registerAlert').innerHTML = `\n                    <div class="alert ${result.success ? 'success' : 'error'}">\n                        ${result.message}\n                    </div>\n                `;
+
+            if (result.success) {
+                // Store form values
+                const formData = new FormData(e.target);
+                const formValues = Object.fromEntries(formData);
+                
+                // store token and user
+                localStorage.setItem('token', result.data.token);
+                localStorage.setItem('user', JSON.stringify(result.data));
+                updateAuthUI();
+                
+                // Show success message
+                document.getElementById('registerAlert').innerHTML = `
+                    <div class="alert success">
+                        ${result.message}
+                    </div>
+                `;
+                
+                // Keep form fields disabled but visible
+                Array.from(e.target.elements).forEach(element => {
+                    if (element.type !== 'submit') {
+                        element.disabled = true;
+                    }
+                });
+                
+                // Redirect to dashboard after showing message
+                setTimeout(() => {
+                    e.target.reset();
+                    showTab('dashboard', null);
+                }, 2000);
+            }
+        } catch (error) {
+            document.getElementById('registerAlert').innerHTML = `\n                    <div class="alert error">Error: ${error.message}</div>\n                `;
+        }
+    });
+
+    function logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        updateAuthUI();
+    }
+
+    async function loadUsers() {
+        const currentUser = getUser();
+        if (!currentUser || currentUser.role !== 'ADMIN') {
+            showTab('dashboard', null);
+            return;
+        }
+
+        try {
+            const response = await authFetch(`${API_BASE}/admin/users`);
+            const data = await parseJsonResponse(response);
+
+            if (data.success) {
+                // Filter users by role
+                const admins = data.data.filter(u => u.role === 'ADMIN');
+                const ngos = data.data.filter(u => u.role === 'NGO');
+                const citizens = data.data.filter(u => u.role === 'CITIZEN');
+
+                // Update Admin table
+                const adminTbody = document.querySelector('#adminUsersTable tbody');
+                adminTbody.innerHTML = admins.length ? admins.map((u, index) => `
+                    <tr style="--row-index: ${index}">
+                        <td>${u.name}</td>
+                        <td>${u.email}</td>
+                        <td>${u.location || 'N/A'}</td>
+                        <td>${u.phone || 'N/A'}</td>
+                        <td><span class="badge allocated">Active</span></td>
+                    </tr>
+                `).join('') : '<tr><td colspan="5" style="text-align: center;">No administrators found</td></tr>';
+
+                // Update NGO table
+                const ngoTbody = document.querySelector('#ngoUsersTable tbody');
+                ngoTbody.innerHTML = ngos.length ? ngos.map((u, index) => `
+                    <tr style="--row-index: ${index}">
+                        <td>${u.name}</td>
+                        <td>${u.email}</td>
+                        <td>${u.organization || 'N/A'}</td>
+                        <td>${u.location || 'N/A'}</td>
+                        <td>${u.phone || 'N/A'}</td>
+                        <td><span class="badge allocated">Active</span></td>
+                    </tr>
+                `).join('') : '<tr><td colspan="6" style="text-align: center;">No NGO representatives found</td></tr>';
+
+                // Update Citizens table
+                const citizenTbody = document.querySelector('#citizenUsersTable tbody');
+                citizenTbody.innerHTML = citizens.length ? citizens.map((u, index) => `
+                    <tr style="--row-index: ${index}">
+                        <td>${u.name}</td>
+                        <td>${u.email}</td>
+                        <td>${u.location || 'N/A'}</td>
+                        <td>${u.phone || 'N/A'}</td>
+                        <td><span class="badge allocated">Active</span></td>
+                    </tr>
+                `).join('') : '<tr><td colspan="5" style="text-align: center;">No citizens found</td></tr>';
+            }
+        } catch (error) {
+            console.error('Error loading users:', error);
+            document.querySelectorAll('#adminUsersTable tbody, #ngoUsersTable tbody, #citizenUsersTable tbody').forEach(tbody => {
+                tbody.innerHTML = `<tr><td colspan="5" class="error">Error loading users: ${error.message}</td></tr>`;
+            });
+        }
+    }
+
+    // initialize UI
+    updateAuthUI();
+    const user = getUser();
+    if (user) {
+        showTab('dashboard', null);
+        loadDashboard();
+    } else {
+        // show only login/register initially
+        showTab('login', null);
+    }
+</script>
+</body>
+</html>
