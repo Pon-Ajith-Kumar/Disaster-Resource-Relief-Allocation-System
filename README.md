@@ -392,7 +392,6 @@ curl -G http://localhost:8080/api/admin/allocations
 - **Port already in use**: change `server.port` or kill the process using 8080.
 - **Access denied for user (MySQL)**: verify user/password and that the DB user has privileges and host access.
 - **Dialect/driver errors**: keep using MySQL 8 dialect; ensure your JDBC URL is correct.
-- **Cold starts on Render free**: this is expected. Upgrade instance type for always‑on or use a provider that offers always‑on.
 - **CORS issues**: check `SecurityConfig.corsConfigurationSource()` and your frontend origin.
 
 ---
