@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.disasterrelief.relief_system.DisasterReliefSystemApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 312.2 s -- in com.disasterrelief.relief_system.DisasterReliefSystemApplicationTests
