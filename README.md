@@ -17,8 +17,6 @@ The platform connects **Citizens**, **NGOs**, and **Administrators** in a stream
 
 The system includes **secure authentication**, **request handling**, **product management**, **allocation & approval workflows**, and **role-based access control**, enabling efficient delivery of essential resources during crisis situations..
 
-The simulation assumes static terrain and uniform water rise; future work includes coupling with rainfall-runoff or SAR-based water detection
-
 <br/>
 
 > This README is written to be **step-by-step**, so anyone can clone, run locally.
