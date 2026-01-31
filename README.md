@@ -15,7 +15,9 @@ The platform connects **Citizens**, **NGOs**, and **Administrators** in a stream
 ✅ NGOs can **create, update, and manage** these products on the platform  
 ✅ Admin monitors **all operations**, manages the **database**, and ensures smooth coordination
 
-The system includes **secure authentication**, **request handling**, **product management**, **allocation & approval workflows**, and **role-based access control**, enabling efficient delivery of essential resources during crisis situations.
+The system includes **secure authentication**, **request handling**, **product management**, **allocation & approval workflows**, and **role-based access control**, enabling efficient delivery of essential resources during crisis situations..
+
+The simulation assumes static terrain and uniform water rise; future work includes coupling with rainfall-runoff or SAR-based water detection
 
 <br/>
 
